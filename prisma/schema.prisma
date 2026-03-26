@@ -1,0 +1,23 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Url {
+  id BigInt @id @default(autoincrement())
+  shortCode String @unique @map("short_code")
+  longUrl String @db.Text @map("long_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime? @map("expires_at")
+  clickCount  Int @default(0) @map("click_count")
+  userId BigInt? @map("user_id")
+  isActive Boolean @default(true) @map("is_active")
+
+  @@index([shortCode])
+  @@map("urls")
+}
