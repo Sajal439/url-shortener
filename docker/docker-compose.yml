@@ -1,0 +1,75 @@
+version: "3.9"
+
+# docker-compose defines your entire local environment.
+# One command: "docker compose up" — starts everything, wired together.
+
+services:
+
+  # ─────────────────────────────────────────
+  # Your Node.js API
+  # ─────────────────────────────────────────
+  api:
+    build:
+      context: .          # look for Dockerfile in current directory
+      dockerfile: Dockerfile
+    container_name: url-shortener-api
+    ports:
+      - "3000:3000"       # host:container — your laptop:3000 → container:3000
+    env_file:
+      - .env              # loads your .env file into the container
+    environment:
+      # Override just the DB host — inside Docker, containers talk by service name
+      # NOT "localhost" (localhost inside the api container = the api container itself)
+      DATABASE_URL: postgresql://postgres:password@db:5432/urlshortener
+      REDIS_HOST: redis   # the redis service name below, not "localhost"
+    depends_on:
+      db:
+        condition: service_healthy  # wait for postgres to be ready before starting api
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  # PostgreSQL database
+  # ─────────────────────────────────────────
+  db:
+    image: postgres:16-alpine   # official image, no Dockerfile needed
+    container_name: url-shortener-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: urlshortener
+    ports:
+      - "5432:5432"       # expose so you can connect with a DB GUI (TablePlus, DBeaver)
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      # pg_data is a named volume — data persists even when container stops/restarts
+      # Without this, your database is wiped every time you run "docker compose down"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  # Redis cache
+  # ─────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: url-shortener-redis
+    ports:
+      - "6379:6379"       # expose so you can inspect with redis-cli locally
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:

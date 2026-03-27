@@ -1,0 +1,10 @@
+# Force LF line endings for all files in this repo.
+# Without this, Windows Git converts files to CRLF, which
+# breaks scripts running inside Linux Docker containers.
+* text=auto eol=lf
+
+# Explicitly force LF for these critical files
+Dockerfile          eol=lf
+*.sh                eol=lf
+docker-compose*.yml eol=lf
+.env*               eol=lf

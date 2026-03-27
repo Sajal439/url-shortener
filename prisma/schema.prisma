@@ -1,7 +1,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -9,7 +8,7 @@ datasource db {
 }
 
 model Url {
-  id BigInt @id @default(autoincrement())
+  id BigInt @id
   shortCode String @unique @map("short_code")
   longUrl String @db.Text @map("long_url")
   createdAt DateTime @default(now()) @map("created_at")
@@ -17,6 +16,7 @@ model Url {
   clickCount  Int @default(0) @map("click_count")
   userId BigInt? @map("user_id")
   isActive Boolean @default(true) @map("is_active")
+  urlHash String @unique @map("url_hash")
 
   @@index([shortCode])
   @@map("urls")

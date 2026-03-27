@@ -10,7 +10,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@prisma/client": ["./src/generated/prisma/index.d.ts"]
     }
   }
 }

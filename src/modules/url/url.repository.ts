@@ -1,33 +1,43 @@
-import prisma from "@/infrastructure/database/prisma.service.js";
+// src/modules/url/url.repository.ts
+// The repository layer is ONLY responsible for talking to the database.
+// No business logic here — just queries.
+import prisma from "../../infrastructure/database/prisma.service.js";
+import { randomUUID } from "node:crypto";
 
 export const getUrlByShortCode = async (shortCode: string) => {
-  return await prisma.url.findFirst({
+  return prisma.url.findFirst({
     where: {
       shortCode,
       isActive: true,
+      // Also filter out expired URLs
       OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
     },
     select: {
+      id: true,
       longUrl: true,
       clickCount: true,
+      createdAt: true,
+      expiresAt: true,
     },
   });
 };
 
-import { randomUUID } from "node:crypto";
 
-export const createUrl = (longUrl: string) => {
+export const createUrl = (id: bigint, longUrl: string, shortCode: string, urlHash: string) => {
   return prisma.url.create({
     data: {
-      longUrl: longUrl,
-      shortCode: `temp_${randomUUID()}`,
+      id,
+      longUrl,
+      shortCode,
+      urlHash,
     },
   });
 };
 
-export const updateShortCode = (id: bigint, shortCode: string) => {
-  return prisma.url.update({
-    where: { id },
-    data: { shortCode: shortCode },
+export const findByHash = (hash: string) => {
+  return prisma.url.findUnique({
+    where: {
+      urlHash: hash,
+    },
   });
 };
