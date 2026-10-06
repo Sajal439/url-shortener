@@ -128,5 +128,15 @@ export const trackClick = (shortCode: string): void => {
   // these to Postgres in batches — much better than a DB write per click.
   redis
     .incr(cacheKey)
-    .catch((err) => console.error("Click tracking failed:", err));
+    .catch((err) => {
+      console.warn(`Redis down. Falling back to DB write for click: ${shortCode}`);
+      // Graceful degradation: If Redis is completely down, fallback to a 
+      // direct async database write so we never lose analytics.
+      import("../../infrastructure/database/prisma.service.js").then(({ default: prisma }) => {
+        prisma.url.update({
+          where: { shortCode },
+          data: { clickCount: { increment: 1 } },
+        }).catch(dbErr => console.error("DB fallback click tracking failed:", dbErr));
+      });
+    });
 };
