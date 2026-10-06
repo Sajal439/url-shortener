@@ -15,8 +15,7 @@ function requireEnv(key: string): string {
 
 export const env = {
   DATABASE_URL: requireEnv("DATABASE_URL"),
-  REDIS_HOST: process.env.REDIS_HOST ?? "localhost",
-  REDIS_PORT: Number(process.env.REDIS_PORT ?? 6379),
+  REDIS_URL: process.env.REDIS_URL, // Optional, ioredis will parse this
   PORT: Number(process.env.PORT ?? 3000),
   BASE_URL: process.env.BASE_URL ?? "http://localhost:3000",
   NODE_ENV: process.env.NODE_ENV ?? "development",
