@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-slate-950: #020617;
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 min-h-screen overflow-x-hidden antialiased;
+  background-image: radial-gradient(circle at 50% 0%, var(--color-slate-800) 0%, var(--color-slate-950) 70%);
+}
+
+/* Background decorative blobs */
+.blob {
+  @apply absolute rounded-full opacity-50 blur-[80px] -z-10 animate-pulse;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+  @apply bg-blue-500/40 w-[300px] h-[300px] -top-24 -left-24;
+}
+
+.blob-2 {
+  @apply bg-purple-500/30 w-[400px] h-[400px] -bottom-36 -right-24;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 30px) scale(1.1); }
+}
+
+.glass-card {
+  @apply bg-slate-800/70 backdrop-blur-xl border border-white/10 rounded-3xl p-10 w-full max-w-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300;
+}
+
+.glass-card:hover {
+  @apply -translate-y-1 shadow-[0_12px_40px_0_rgba(0,0,0,0.45)];
+}
+
+.spinner {
+  @apply w-5 h-5 border-[3px] border-white/30 border-t-white rounded-full animate-spin;
+}
