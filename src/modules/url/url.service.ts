@@ -4,7 +4,7 @@ import { createUrl, getUrlByShortCode, findByHash } from "./url.repository.js";
 import { encodeBase62 } from "../../common/utils/base62.js";
 import { env } from "../../config/env.js";
 import type { ShortenUrlResponse, StatsResponse } from "./url.types.js";
-import { generateId } from "@/common/utils/snowflake.js";
+import { generateId } from "../../common/utils/snowflake.js";
 
 const CACHE_PREFIX = "url:";
 const CACHE_TTL_SECONDS = 60 * 60 * 24; // 24 hours

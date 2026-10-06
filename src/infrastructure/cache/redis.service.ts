@@ -1,4 +1,4 @@
-import { env } from "@/config/env.js";
+import { env } from "../../config/env.js";
 import { Redis } from "ioredis";
 const redis = new Redis({
   host: env.REDIS_HOST,
