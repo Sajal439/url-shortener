@@ -3,8 +3,8 @@
 // Run with: npm test
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { encodeBase62 } from "../src/common/utils/base62.ts";
-import { generateId } from "../src/common/utils/snowflake.ts";
+import { encodeBase62 } from "../src/common/utils/base62.js";
+import { generateId } from "../src/common/utils/snowflake.js";
 
 // ────────────────────────────────────────────────────────────
 // Base62 Encoding
