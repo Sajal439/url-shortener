@@ -2,6 +2,8 @@
 // We build and export the Fastify app separately from starting the server.
 // Why? So tests can import the app without binding to a port.
 import Fastify, { FastifyError } from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import { urlRoutes } from "./modules/url/url.routes.js";
 
 export function buildApp() {
@@ -14,6 +16,14 @@ export function buildApp() {
           ? { target: "pino-pretty" }
           : undefined,
     },
+  });
+
+  // Security headers
+  fastify.register(helmet);
+
+  // Enable CORS for frontend integration
+  fastify.register(cors, {
+    origin: "*", // In a real production app, restrict this to your frontend domain
   });
 
   // Global error handler — catches anything thrown inside route handlers

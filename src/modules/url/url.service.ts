@@ -102,10 +102,20 @@ export const getUrlStats = async (
   const url = await getUrlByShortCode(shortCode);
   if (!url) throw new Error("URL not found");
 
+  // Include any un-flushed clicks still sitting in Redis so the count
+  // is accurate in real-time, not just after the next flush cycle.
+  let pendingClicks = 0;
+  try {
+    const raw = await redis.get(`clicks:${shortCode}`);
+    if (raw) pendingClicks = Number(raw);
+  } catch {
+    // Redis down — just report DB count
+  }
+
   return {
     shortUrl: `${env.BASE_URL}/${shortCode}`,
     longUrl: url.longUrl,
-    clickCount: url.clickCount,
+    clickCount: url.clickCount + pendingClicks,
     createdAt: url.createdAt,
     expiresAt: url.expiresAt ?? null,
   };
